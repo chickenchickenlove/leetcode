@@ -1,81 +1,54 @@
-def add(stack, s, count):
-    stack.append(s)
-    return count + 1
+from dataclasses import dataclass
+@dataclass(frozen=True)
+class Record:
+    s: str
+    p: str
+
+    def get(self):
+        return self.s, self.p
+
+
+        # a* -> 무조건 한 덩어리로 취급해야 함.  두 칸을 넘겼다고 해보자.
+        # a*a
+        # a인 경우라면 어떻게 해야할까?
+        # 1. a*를 무시하고 넘긴다.
+        # 2. a를 매칭하고 넘긴다.
+        # 즉, 이 과정을 둘다 탐색해야한다. 어떤 경우는 맞을 수도 있고, 어떤 경우는 틀릴 수도 있기 때문이다.
+        # 재귀적으로 해서, 마지막에 True라는 값을 넘겨야 할 것 같음.
+
+# 이건 이제 timeout이 발생함.
 
 class Solution:
+
     def isMatch(self, s: str, p: str) -> bool:
-        pidx = 0
-        iter_cnt = 0
+        def sol(record, si, pi):
+            s, p = record.get()
+            if len(s) == si and len(p) == pi:
+                return True
+            if len(p) == pi:
+                return False
 
-        # Match된 녀석들은 stack에 넣는다.
-        # 만약에 안되었으면 어디까지 뽑아야 하지?
-        stack = []
-
-        # 반복 플래그가 켜진거, 마지막 문자 무엇인지 기억
-        can_repeat = False
-        last = ''
-
-        for string in s:
-            if pidx == len(p): return False
-            iter_cnt += 1
-            if string == p[pidx]:
-                stack.append(p[pidx])
-                pidx += 1
-                last = string
-                can_repeat = False
-            elif p[pidx] == '.':
-                stack.append(p[pidx])
-                pidx +=1
-                last = '.'
-                can_repeat = False
-            elif p[pidx] == '*':
-                if stack[-1] == string or stack[-1] == '.':
-                    stack.append('*')
-                    pidx += 1
-                    can_repeat = True
-                # 매칭 안되는 경우.
-                else: return False
+            result = [0]
+            # *가 있는 경우
+            if pi+1 < len(p) and p[pi+1] == '*':
+                # 현재 문자에 매칭되지 않는 것으로 판단하고 다음으로 넘김.
+                if sol(record, si, pi + 2):
+                    return True
+                # 현재 문자에 매칭되는 것으로 판단하고, 문자열 매칭 판정하고 넘김.
+                if len(s) > si and (p[pi] == s[si] or p[pi] == '.'):
+                    if sol(record, si+1, pi):
+                        return True
             else:
-                if (last == '.' or last == string) and can_repeat: continue
-                else:
-                    ppidx = pidx
+                if len(p) > pi and len(s) > si and (p[pi] == s[si] or p[pi] == '.'):
+                    if sol(record, si+1, pi+1):
+                        return True
+                    # result.append(sol(record, si+1, pi+1))
 
-                    for pp in range(ppidx, len(p)):
+            return max(result)
 
-                        # 그 다음칸을 볼 수 있는 경우
-                        if pp + 1 < len(p):
-                            if p[pp+1] == '*':
-                                stack.append(p[pidx])
-                                pidx += 1
-                                stack.append(p[pidx])
-                                pidx += 1
-
-                        if pidx == len(p): return False
-                        if p[pidx] == string:
-                            stack.append(p[pidx])
-                            pidx +=1
-                            break
-                        else: return False
-
-
-
-
-
-
-
-        # print(iter_cnt == len(s) and pidx == len(p))
-        return iter_cnt == len(s) and pidx == len(p)
-
-            # 현재값이 매칭되는 경우. ->
-            # 그 값을 stack에 넣고 pidx + 1
-
-            # 현재값이 매칭되지 않는 경우.
-            # (.)인 경우 -> 모든 문자에 매칭된다는 것임. -> 하고 넘기면 될 듯.
-            # (*)인 경우 -> 앞에 있는 값의 여부에 따라 나누어짐
-
-
-
-
+        record = Record(s, p)
+        a = sol(record, 0, 0)
+        return a == 1
 
 
 
@@ -89,6 +62,17 @@ s = Solution()
 # print(s.isMatch('aa', 'a*') == True)
 # print(s.isMatch('ab', '.*') == True)
 # print(s.isMatch('aab', 'c*a*b') == True)
-# print(s.isMatch("mississippi", "mis*is*p*.") == False)
+# print(s.isMatch("mississippi", "mis*is*p*.") == True)
+
+# print(s.isMatch("mppi", "mp*.") == True)
+# print(s.isMatch("aaaaaaaaaaaaaaaab", "a*a*a*a*a*a*a*a*a*a*") == False)
+print(s.isMatch("aaaaaaaaaaaaaaaaaaab", "a*a*a*a*a*a*a*a*a*a*") == False)
+# print(s.isMatch("aa", ".*.") == True)
 # print(s.isMatch("aaa", "a*a") == True)
-print(s.isMatch("abcd", "d*") == True)
+# print(s.isMatch("abcd", "d*") == False)
+# print(s.isMatch("aaa", "ab*a*c*a") == True)
+# print(s.isMatch("ab", ".*c") == False)
+# print(s.isMatch("aaa", "aaaa") == False)
+#
+#
+# # """ aaaaaaaa a*aaaa """
