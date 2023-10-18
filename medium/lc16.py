@@ -12,7 +12,6 @@ class Solution:
         for mi in range(0, len(nums)-1):
             l, r = mi+1, len(nums)-1
             while l < r:
-                print(f'{l=},{r=}')
                 t = nums[l]+nums[mi]+nums[r]
                 diff = abs(target - t)
                 if diff < min_diff:
@@ -21,7 +20,7 @@ class Solution:
 
                 if t == target:
                     return t
-                if t < target < 0:
+                if t < target:
                     l+=1
                 else:
                     r-=1
