@@ -42,3 +42,5 @@ class Solution:
     #         print(len(q))
     #
     #     return d[lr-1][lc-1]
+
+Solution().minPathSum( [[1,3,1],[1,5,1],[4,2,1]])
