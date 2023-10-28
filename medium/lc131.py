@@ -58,15 +58,32 @@ class Solution:
             if dp[0][j]:
                 d[0][j] = 1
 
-        rrrrr = 9876543210
-        for i in range(1, n):
-            for j in range(n):
-                if dp[i-1][j-1] and dp[i][j]:
-                    d[i][j] = d[i-1][j-1] + 1
-                    if j == n-1 and d[i][j] > 0:
-                        rrrrr = min(rrrrr, d[i][j])
-        print(rrrrr)
-        return rrrrr
+        MIN = 999867821349234
+        def dfs(last_r, last_c, count):
+            nonlocal MIN
+
+            if last_c == len(s)-1:
+                MIN = min(MIN, count)
+                return
+
+            next_r = last_c+1
+            for next_c in range(next_r, n):
+                if dp[next_r][next_c]:
+                    dfs(next_r, next_c, count+1)
+
+        for j in range(n):
+            if dp[0][j] == True:
+                print('h')
+                dfs(0, j+1, 1)
+
+
+        print(MIN)
+
+
+
+
+
+
 
         # for i in range(n):
         #     for j in range(n):
