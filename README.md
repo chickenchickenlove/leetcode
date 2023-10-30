@@ -50,3 +50,6 @@
 - Jump Game (1)
 - Two Sum (1)
 - Coin Change (1)
+- 120. Triangle (1)
+- 403. Frog Jump (1) 
+- 343. Integer Break (1)
