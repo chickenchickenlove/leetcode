@@ -7,34 +7,68 @@ from typing import List
 # dp를 다 만들 순 없고, 저 값을 그대로 사용해야 함.
 
 
+# 좀 더 답지
 class Solution:
     def canCross(self, stones: List[int]) -> bool:
         n = len(stones)
-        dpm = [9876543210 for _ in range(n)]
-        dpM = [0 for _ in range(n)]
+        dp = [[False]*n for _ in range(n)]
+        stone_dict = {stone: index for index, stone in enumerate(stones)}
 
         if stones[1] != 1:
             return False
-        dpm[0] = 0
-        dpm[1] = stones[1]
-        dpM[1] = stones[1]
+        dp[1][1] = True
 
-        # 2도 나와야함.
-        for i in range(2, n):
-            for j in range(i):
-                pre_stone = stones[j]
-                now_stone = stones[i]
+        # stone
+        for i in range(n):
+            if (now_stone := stones[i]) not in stone_dict:
+                continue
 
-                min_range = dpm[j]
-                max_range = dpM[j]
+            for j in range(i+1):
+                if dp[i][j] and (now_stone + j in stone_dict):
+                    next_stone = stone_dict[now_stone + j]
+                    dp[next_stone][j] = True
+                if dp[i][j] and (now_stone + j+1 in stone_dict):
+                    next_stone = stone_dict[now_stone + j+1]
+                    dp[next_stone][j+1] = True
+                if dp[i][j] and (now_stone + j-1 in stone_dict):
+                    next_stone = stone_dict[now_stone + j-1]
+                    dp[next_stone][j-1] = True
 
-                if pre_stone + (min_range-1) <= now_stone <= pre_stone + (max_range+1):
-                    if (now_stone - pre_stone) in (min_range-1, min_range, min_range+1, max_range-1, max_range, max_range+1):
-                        dpm[i] = min(dpm[i], now_stone - pre_stone)
-                        dpM[i] = max(dpM[i], now_stone - pre_stone)
-        # print(f'{dpm=}')
-        # print(f'{dpM=}')
-        return dpm[-1] != 9876543210
+        ans = True in dp[-1]
+        # print(ans)
+        return ans
+
+Solution().canCross([0,1,3,5,6,8,12,17])
+
+# 내 풀이
+# class Solution:
+#     def canCross(self, stones: List[int]) -> bool:
+#         n = len(stones)
+#         dpm = [9876543210 for _ in range(n)]
+#         dpM = [0 for _ in range(n)]
+#
+#         if stones[1] != 1:
+#             return False
+#         dpm[0] = 0
+#         dpm[1] = stones[1]
+#         dpM[1] = stones[1]
+#
+#         # 2도 나와야함.
+#         for i in range(2, n):
+#             for j in range(i):
+#                 pre_stone = stones[j]
+#                 now_stone = stones[i]
+#
+#                 min_range = dpm[j]
+#                 max_range = dpM[j]
+#
+#                 if pre_stone + (min_range-1) <= now_stone <= pre_stone + (max_range+1):
+#                     if (now_stone - pre_stone) in (min_range-1, min_range, min_range+1, max_range-1, max_range, max_range+1):
+#                         dpm[i] = min(dpm[i], now_stone - pre_stone)
+#                         dpM[i] = max(dpM[i], now_stone - pre_stone)
+#         # print(f'{dpm=}')
+#         # print(f'{dpM=}')
+#         return dpm[-1] != 9876543210
 # min, max가 보장된다고 해서 항상 그 안의 값이 가능하지는 않음.
 # 그런데 대부분 되네? min, max만 하면 될 것 같음...
 
