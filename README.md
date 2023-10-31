@@ -47,7 +47,7 @@
 - Concatenation of Array (1)
 - Single Number (1)
 - Add Two Numbers (1)
-- Jump Game (1)
+- 55. Jump Game (2)
 - Two Sum (1)
 - Coin Change (1)
 - 120. Triangle (1)
