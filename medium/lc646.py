@@ -14,26 +14,44 @@ class Solution:
     def findLongestChain(self, pairs: List[List[int]]) -> int:
         N = len(pairs)
         pairs.sort()
-        memo = {}
-        def recursive(now):
-            nonlocal N
+        dp = [0]*N
 
-            if now in memo:
-                return memo[now]
-            memo[now] = 1
-            for next in range(now+1, N):
-                if pairs[now][1] < pairs[next][0]:
-                    r = recursive(next)
-                    memo[now] = max(memo[now], 1 + r)
+        for i in range(N-1, -1, -1):
+            if dp[i] == 0:
+                dp[i] = 1
+            for j in range(i+1, N):
+                if pairs[i][1] < pairs[j][0]:
+                    dp[i] = max(dp[i], 1 + dp[j])
 
-            return memo[now]
+        return max(dp)
 
-        ans = 0
-        for i in range(N):
-            ans = max(ans,recursive(i))
+Solution().findLongestChain([[1,2],[2,3],[3,4]])
 
-        print(ans)
-        return ans
-
-
-Solution().findLongestChain()
+#
+# class Solution:
+#     def findLongestChain(self, pairs: List[List[int]]) -> int:
+#         N = len(pairs)
+#         pairs.sort()
+#         memo = {}
+#         def recursive(now):
+#             nonlocal N
+#
+#             if now in memo:
+#                 return memo[now]
+#             memo[now] = 1
+#             for next in range(now+1, N):
+#                 if pairs[now][1] < pairs[next][0]:
+#                     r = recursive(next)
+#                     memo[now] = max(memo[now], 1 + r)
+#
+#             return memo[now]
+#
+#         ans = 0
+#         for i in range(N):
+#             ans = max(ans,recursive(i))
+#
+#         print(ans)
+#         return ans
+#
+#
+# Solution().findLongestChain()
