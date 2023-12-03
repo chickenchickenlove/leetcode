@@ -5,45 +5,34 @@
 # 안 연속해서 없어지면 끝.
 class Solution:
     def longestValidParentheses(self, s: str) -> int:
+
         n = len(s)
-        if n <= 1:
-            return 0
-        m = 0
-        stack = []
+        if n <= 1: return 0
 
-        for i, a in enumerate(s):
-            if a == '(':
-                stack.append(i)
-            else:
-                # stack.pop()
-                if not stack:
-                    stack.append(i)
-                else:
-                    m = max(m, i - stack[-1])
-                    # stack.append(i)
+        dp = [0 for _ in range(n)]
 
-        print(m)
-        return m
+        for i in range(1, n):
 
+           if s[i-1] == '(' and s[i] == ')':
+               dp[i] += 2
+               if i-2 >= 0:
+                   dp[i] += dp[i-2]
+           elif s[i-1] == ')' and s[i] ==')':
+               nidx = dp[i-1] + 1
+               if i-nidx >= 0 and s[i-nidx] == '(':
+                   dp[i] += dp[i-1] + 2 + dp[i-nidx-1]
 
+            # 0 2 0 0 2 4
+            # ()(())
+        # print(dp)
+        return max(dp)
 
-for s in ["()(()", " ()(())"]:
-    Solution().longestValidParentheses(s)
+Solution().longestValidParentheses('()(())')
+Solution().longestValidParentheses(')()())')
 
-# 더 많아지는 순간 끊겼다고 볼 수 있을 듯?
-# ()(((()))))
-# )())))
-
-
-# 12
-# 2칸으로 끝나지는 않음.
+# '020406'
+# '()()()'
 #
-# ((()))((()))
-# (((((((((())
-# ((())))((()) -> 6이어야 함.
-# ) > ( 이거일 때 문제가 됨. 즉, 이렇게 될 때, 연속이 끊김.
-# (()(()((((( -> 이런 경우도 있을 듯? 2개인데.
-# 없어졌을 때를 기준으로 )가 나타나면, 괜찮을 듯 ???
-# ((((((()(((()))
-# (((()()())))
-# Pop () 할 때 마다 count + 1을 하면 됨.
+# i-dp[i-1]-1 == '(' -> dp[i] = 2 + dp[i-1] + dp[i-dp[i-1]]
+# '0002'
+# '((()))'
